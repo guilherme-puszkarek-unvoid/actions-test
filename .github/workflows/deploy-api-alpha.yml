@@ -8,15 +8,8 @@ on:
 jobs:
   if_merged:
   validate-alpha:
-    name: Validate Alpha
-    if: github.event.pull_request.draft == false
+    name: Validate Prod
     runs-on: ubuntu-latest
-    # TODO(iago): Get api keys with Jordan
-    # env:
-    #   SENDGRID_CONTACT_API_KEY: ${{ secrets.SENDGRID_CONTACT_API_KEY }}
-    #   SENDGRID_CONTACT_EMAIL: ${{ secrets.SENDGRID_CONTACT_EMAIL }}
-    #   SENDGRID_NOTIFICATION_API_KEY: ${{ secrets.SENDGRID_NOTIFICATION_API_KEY }}
-    #   SENDGRID_NOTIFICATION_EMAIL: ${{ secrets.SENDGRID_NOTIFICATION_EMAIL }}
 
     steps:
       - name: Checkout
@@ -24,35 +17,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Cache presented some errors, commenting for now
-      # - name: Cache Angular build
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: .angular/cache
-      #     key: ${{ runner.os }}-angular-build-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-angular-build-
-
       - name: Use Node.js 18.17.1
         uses: actions/setup-node@v3
         with:
           node-version: '18.17.1'
           cache: 'npm'
 
-      # A Github Action which sets the base and head SHAs required for the nx affected commands in CI
-      - uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: 'dev'
-
       - name: Install dependencies
-        run: npm ci
+        run: npm clean-install
 
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            package_lock:
-              - 'package-lock.json'
-
-      - name: Build Alpha Projects
-        run: npm run build:frontend
+      - name: Prettier
+        run: npm run lint:prettier

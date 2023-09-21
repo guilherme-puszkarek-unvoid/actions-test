@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build:frontend": "npx nx run actions-test:build"
+    "build:frontend": "nx run actions-test:build",
+    "lint:prettier": "nx format:check"
   },
   "private": true,
   "dependencies": {
